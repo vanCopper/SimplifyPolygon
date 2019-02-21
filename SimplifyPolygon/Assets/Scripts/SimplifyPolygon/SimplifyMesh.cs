@@ -20,7 +20,7 @@ public class SimplifyMesh
         while(true)
         {
             int vertexCount = vertices.Count;
-            if (vertexCount == 0) break;
+            if (vertexCount == 0 || vertexCount <= 1000) break;
 
             SimplifyVertex mn = MiniCostEdge();
 
@@ -32,7 +32,43 @@ public class SimplifyMesh
             return triangle.isRemoved;
         });
 
+        List<int> indices = new List<int>();
+        List<Vector3> tVertices = new List<Vector3>();
+        List<Vector2> tUVS = new List<Vector2>();
+        Dictionary<int, int> idindex = new Dictionary<int, int>();
 
+        int indexV = 0;
+        foreach (SimplifyTriangle triangle in triangles)
+        {
+            if (!idindex.TryGetValue(triangle.v0.id, out indexV))
+            {
+                indexV = tVertices.Count;
+                idindex.Add(triangle.v0.id, indexV);
+                tVertices.Add(triangle.v0.position);
+                tUVS.Add(triangle.v0.uv);
+            }
+            indices.Add(indexV);
+            if (!idindex.TryGetValue(triangle.v1.id, out indexV))
+            {
+                indexV = tVertices.Count;
+                idindex.Add(triangle.v1.id, indexV);
+                tVertices.Add(triangle.v1.position);
+                tUVS.Add(triangle.v1.uv);
+            }
+            indices.Add(indexV);
+            if (!idindex.TryGetValue(triangle.v2.id, out indexV))
+            {
+                indexV = tVertices.Count;
+                idindex.Add(triangle.v2.id, indexV);
+                tVertices.Add(triangle.v2.position);
+                tUVS.Add(triangle.v2.uv);
+            }
+            indices.Add(indexV);
+        }
+
+        originMesh.triangles = indices.ToArray();
+        originMesh.vertices = tVertices.ToArray();
+        originMesh.uv = tUVS.ToArray();
 
         return null;
     }
@@ -41,11 +77,12 @@ public class SimplifyMesh
     {
         Vector3[] originVertices = originMesh.vertices;
         int[] originTriangles = originMesh.triangles;
+        Vector2[] originUVS = originMesh.uv;
 
         for (int i = 0; i < originVertices.Length; i++)
         {
             Vector3 vexter = originVertices[i];
-            vertices.Add(new SimplifyVertex(vexter, i));
+            vertices.Add(new SimplifyVertex(vexter, originUVS[i], i));
         }
 
         int v0;
@@ -82,7 +119,7 @@ public class SimplifyMesh
     private float ComputeEdgeCollapseCost(SimplifyVertex u, SimplifyVertex v)
     {
         float edgelength = (u.position - v.position).sqrMagnitude;
-        float curvature = 0; // 曲率
+        float curvature = 0.0f; // 曲率
 
         List<SimplifyTriangle> sides = new List<SimplifyTriangle>();
 
