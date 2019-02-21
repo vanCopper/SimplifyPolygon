@@ -11,6 +11,7 @@ public class SimplifyTest : MonoBehaviour
         Mesh mesh = meshRenderer.sharedMesh;
 
         SimplifyMesh simplifyMesh = new SimplifyMesh(mesh);
+        simplifyMesh.GetSimplifyMesh();
     }
 
     // Update is called once per frame

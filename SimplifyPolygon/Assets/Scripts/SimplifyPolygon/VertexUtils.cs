@@ -12,5 +12,10 @@ public class VertexUtils
     {
         return a * a;
     }
+
+    public static float Xor(Vector3 v0, Vector3 v1)
+    {
+        return v0.x * v1.x + v0.y * v0.y + v0.z * v1.z;
+    }
    
 }
