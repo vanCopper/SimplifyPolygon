@@ -1,0 +1,8 @@
+
+SimplifyPolygon/.vs/*
+SimplifyPolygon/Library/*
+*.log
+SimplifyPolygon/obj/Debug/*
+SimplifyPolygon/Packages/manifest.json
+SimplifyPolygon/SimplifyPolygon.sln
+SimplifyPolygon/Temp/*
