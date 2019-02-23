@@ -34,9 +34,10 @@ public class SimplifyVertex
 
     public void AppendNeighbor(SimplifyVertex vertex)
     {
-        if(!neighbors.Contains(vertex))
+        if(!neighbors.Contains(vertex) && this != vertex)
         {
             neighbors.Add(vertex);
+            vertex.AppendNeighbor(this);
         }
     }
 
@@ -61,6 +62,7 @@ public class SimplifyVertex
         }
 
         neighbors.Clear();
+        triangles.Clear();
     }
 
 

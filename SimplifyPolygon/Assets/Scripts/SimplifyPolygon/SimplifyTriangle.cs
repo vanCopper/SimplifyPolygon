@@ -15,9 +15,9 @@ public class SimplifyTriangle
         this.v0 = v0;
         this.v1 = v1;
         this.v2 = v2;
-        v0.triangles.Add(this);
-        v1.triangles.Add(this);
-        v2.triangles.Add(this);
+        this.v0.triangles.Add(this);
+        this.v1.triangles.Add(this);
+        this.v2.triangles.Add(this);
         ComputeNormal();
     }
 

@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 public class SimplifyMesh
 {
+    /// <summary>
+    ///  1. 搜集顶点、三角面和三角边的关系。 
+    ///  2. 计算坍缩代价和坍缩目标，并排序。 
+    ///  3. 替换坍缩代价最小的点，并重新计算相邻点的坍缩代价和坍缩目标，更新有序列表。 
+    ///  4. 判断当前顶点数量是否大于目标数量，是则重复第3步。
+    /// </summary>
     public Mesh originMesh;
     public List<SimplifyTriangle> triangles = new List<SimplifyTriangle>();
     public List<SimplifyVertex> vertices = new List<SimplifyVertex>();
@@ -20,9 +26,11 @@ public class SimplifyMesh
         while(true)
         {
             int vertexCount = vertices.Count;
-            if (vertexCount == 0 || vertexCount <= 1000) break;
+            if (vertexCount == 0 || vertexCount <= 400) break;
 
             SimplifyVertex mn = MiniCostEdge();
+
+            if (mn.isRemoved || mn.cost > 1000000.0f) break;
 
             Collapse(mn, mn.collapse);
             vertices.Remove(mn);
@@ -66,11 +74,14 @@ public class SimplifyMesh
             indices.Add(indexV);
         }
 
-        originMesh.triangles = indices.ToArray();
-        originMesh.vertices = tVertices.ToArray();
-        originMesh.uv = tUVS.ToArray();
+        Mesh simplifyMesh = new Mesh();
+        simplifyMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        simplifyMesh.vertices = tVertices.ToArray();
+        //simplifyMesh.uv = tUVS.ToArray();
+        simplifyMesh.triangles = indices.ToArray();
+        simplifyMesh.RecalculateNormals();
 
-        return null;
+        return simplifyMesh;
     }
 
     private void InitMesh()
@@ -98,6 +109,8 @@ public class SimplifyMesh
             vertices[v0].AppendNeighbor(vertices[v1]);
             vertices[v0].AppendNeighbor(vertices[v2]);
             vertices[v1].AppendNeighbor(vertices[v2]);
+
+            Debug.Log("");
         }
 
         Debug.Log("InitMesh");
@@ -108,7 +121,7 @@ public class SimplifyMesh
         SimplifyVertex mn = vertices[0];
         foreach(SimplifyVertex v in vertices)
         {
-            if(v.cost < mn.cost)
+            if(!v.isRemoved && v.cost < mn.cost)
             {
                 mn = v;
             }
@@ -118,7 +131,7 @@ public class SimplifyMesh
 
     private float ComputeEdgeCollapseCost(SimplifyVertex u, SimplifyVertex v)
     {
-        float edgelength = (u.position - v.position).sqrMagnitude;
+        float edgelength = VertexUtils.magnitude(u.position - v.position);
         float curvature = 0.0f; // 曲率
 
         List<SimplifyTriangle> sides = new List<SimplifyTriangle>();
@@ -156,7 +169,7 @@ public class SimplifyMesh
             return;
         }
 
-        v.cost = 1000000.0f;
+        v.cost = 1000001.0f;
         v.collapse = null;
 
         foreach (SimplifyVertex nVertex in v.neighbors)
@@ -181,11 +194,11 @@ public class SimplifyMesh
     // u->v 顶点v替换u 移除u
     private void Collapse(SimplifyVertex u, SimplifyVertex v)
     {
-        if(v == null)
-        {
-            u.Remove();
-            return;
-        }
+        //if(v == null)
+        //{
+        //    u.Remove();
+        //    return;
+        //}
 
         List<SimplifyVertex> neighbors = new List<SimplifyVertex>(u.neighbors);
         List<SimplifyTriangle> triangles = new List<SimplifyTriangle>(u.triangles);
