@@ -26,7 +26,7 @@ public class SimplifyMesh
         while(true)
         {
             int vertexCount = vertices.Count;
-            if (vertexCount == 0 || vertexCount <= 400) break;
+            if (vertexCount == 0 || vertexCount <= 200) break;
 
             SimplifyVertex mn = MiniCostEdge();
 
@@ -172,6 +172,8 @@ public class SimplifyMesh
         v.cost = 1000001.0f;
         v.collapse = null;
 
+        //if (v.isEdge) return;
+
         foreach (SimplifyVertex nVertex in v.neighbors)
         {
             float cost = ComputeEdgeCollapseCost(v, nVertex);
@@ -185,8 +187,12 @@ public class SimplifyMesh
 
     private void ComputeAllEdgeCollapseCosts()
     {
-        foreach(SimplifyVertex v in vertices)
+        foreach (SimplifyVertex v in vertices)
         {
+            if (v.triangles.Count < 6)
+            {
+                v.isEdge = true;
+            }
             ComputeEdgeCostAtVertex(v);
         }
     }
@@ -194,11 +200,11 @@ public class SimplifyMesh
     // u->v 顶点v替换u 移除u
     private void Collapse(SimplifyVertex u, SimplifyVertex v)
     {
-        //if(v == null)
-        //{
-        //    u.Remove();
-        //    return;
-        //}
+        if (v == null)
+        {
+            u.Remove();
+            return;
+        }
 
         List<SimplifyVertex> neighbors = new List<SimplifyVertex>(u.neighbors);
         List<SimplifyTriangle> triangles = new List<SimplifyTriangle>(u.triangles);

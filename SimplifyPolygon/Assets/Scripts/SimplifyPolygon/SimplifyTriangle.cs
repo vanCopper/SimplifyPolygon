@@ -64,6 +64,7 @@ public class SimplifyTriangle
 
     public void Remove()
     {
+        Debug.Log("SimplifyTriangle.Remove::::");
         isRemoved = true;
         v0.triangles.Remove(this);
         v1.triangles.Remove(this);

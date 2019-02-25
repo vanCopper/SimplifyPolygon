@@ -12,7 +12,13 @@ public class SimplifyVertex
     public List<SimplifyTriangle> triangles = new List<SimplifyTriangle>();
     public float cost; // 顶点折叠代价
     public SimplifyVertex collapse; // 折叠目标顶点 
-    public bool isRemoved = false; 
+    public bool isRemoved = false;
+    public bool isEdge = false;
+
+    public static Vector3[] vectors = {
+        new Vector3(),
+        new Vector3()
+    };
 
     public SimplifyVertex()
     {
@@ -50,11 +56,12 @@ public class SimplifyVertex
         }
        
         neighbors.Remove(vertex);
-        vertex.neighbors.Remove(this);
+        vertex.RemoveNeighbor(this);
     }
 
     public void Remove()
     {
+        Debug.Log("SimplifyVertex.Remove::::");
         isRemoved = true;
         foreach(SimplifyVertex neighbor in neighbors)
         {

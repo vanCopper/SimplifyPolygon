@@ -10,6 +10,11 @@ public class SimplifyTest : MonoBehaviour
         //SkinnedMeshRenderer meshRenderer = GetComponent<SkinnedMeshRenderer>();
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         Mesh mesh = meshFilter.mesh;
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.vertices = Rabbit.vertices;
+        mesh.triangles = Rabbit.triangles;
+        mesh.RecalculateNormals();
+
         //Mesh mesh = meshRenderer.sharedMesh;
 
         SimplifyMesh simplifyMesh = new SimplifyMesh(mesh);
