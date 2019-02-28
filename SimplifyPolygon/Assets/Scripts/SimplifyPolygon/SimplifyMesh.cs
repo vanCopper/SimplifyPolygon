@@ -26,7 +26,7 @@ public class SimplifyMesh
         while(true)
         {
             int vertexCount = vertices.Count;
-            if (vertexCount == 0 || vertexCount <= 50) break;
+            if (vertexCount == 0 || vertexCount <= 200) break;
 
             SimplifyVertex mn = MiniCostEdge();
 
@@ -202,30 +202,62 @@ public class SimplifyMesh
         if (v == null)
         {
             u.Remove();
+            vertices.Remove(u);
             return;
         }
 
-        List<SimplifyVertex> neighbors = new List<SimplifyVertex>(u.neighbors);
-        List<SimplifyTriangle> triangles = new List<SimplifyTriangle>(u.triangles);
+        int i;
+        List<SimplifyVertex> tmp = new List<SimplifyVertex>();
 
-        foreach(SimplifyTriangle triangle in triangles)
+        for(i = 0; i < u.neighbors.Count; i++)
         {
-            if(triangle.Contains(v))// 移除包含uv边的三角形
+            tmp.Add(u.neighbors[i]);
+        }
+        // 移除包含uv边的三角形
+        for(i = u.triangles.Count - 1; i >= 0; i--)
+        {
+            if(u.triangles[i].Contains(v))
             {
-                triangle.Remove();
-            }else
-            {
-                // 用v替换u 更新包含u但不包含v的三角形
-                triangle.ReplaceSimplifyVertex(u, v);
+                u.triangles[i].Remove();
             }
         }
-        // 移除顶点u
-        u.Remove();
-        //重新计算u.neighbors顶点代价
-        foreach(SimplifyVertex vertex in neighbors)
+        // 用v替换u 更新包含u但不包含v的三角形
+
+        for(i = u.triangles.Count - 1; i >= 0; i--)
         {
-            ComputeEdgeCostAtVertex(vertex);
+            u.triangles[i].ReplaceSimplifyVertex(u, v);
         }
+
+        u.Remove();
+        vertices.Remove(u);
+
+        for(i = 0; i < tmp.Count; i++)
+        {
+            ComputeEdgeCostAtVertex(tmp[i]);
+        }
+
+
+        //List<SimplifyVertex> neighbors = new List<SimplifyVertex>(u.neighbors);
+        //List<SimplifyTriangle> triangles = new List<SimplifyTriangle>(u.triangles);
+
+        //foreach(SimplifyTriangle triangle in triangles)
+        //{
+        //    if(triangle.Contains(v))// 移除包含uv边的三角形
+        //    {
+        //        triangle.Remove();
+        //    }else
+        //    {
+        //        // 用v替换u 更新包含u但不包含v的三角形
+        //        triangle.ReplaceSimplifyVertex(u, v);
+        //    }
+        //}
+        //// 移除顶点u
+        //u.Remove();
+        ////重新计算u.neighbors顶点代价
+        //foreach(SimplifyVertex vertex in neighbors)
+        //{
+        //    ComputeEdgeCostAtVertex(vertex);
+        //}
     }
 
 }

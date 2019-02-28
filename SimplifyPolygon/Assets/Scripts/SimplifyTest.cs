@@ -12,10 +12,10 @@ public class SimplifyTest : MonoBehaviour
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         Mesh mesh = meshFilter.mesh;
         if (mesh == null) mesh = new Mesh();
-        //mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        //mesh.vertices = Rabbit.vertices;
-        //mesh.triangles = Rabbit.triangles;
-        //mesh.RecalculateNormals();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.vertices = Rabbit.vertices;
+        mesh.triangles = Rabbit.triangles;
+        mesh.RecalculateNormals();
 
         //Mesh mesh = meshRenderer.sharedMesh;
 
