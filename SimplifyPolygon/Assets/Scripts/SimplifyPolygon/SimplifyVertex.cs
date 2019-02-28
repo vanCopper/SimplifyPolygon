@@ -13,7 +13,6 @@ public class SimplifyVertex
     public float cost; // 顶点折叠代价
     public SimplifyVertex collapse; // 折叠目标顶点 
     public bool isRemoved = false;
-    public bool isEdge = false;
 
     public static Vector3[] vectors = {
         new Vector3(),
@@ -38,14 +37,36 @@ public class SimplifyVertex
         this.id = id;
     }
 
+    public int GetSimplifyTriangleCount(SimplifyTriangle simplifyTriangle)
+    {
+        int count = 0;
+        foreach (SimplifyTriangle triangle in triangles)
+        {
+            if (triangle == simplifyTriangle)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public void AppendNeighbor(SimplifyVertex vertex)
     {
-        if(!neighbors.Contains(vertex) && this != vertex)
+        if (!neighbors.Contains(vertex) && this != vertex)
         {
             neighbors.Add(vertex);
             vertex.AppendNeighbor(this);
         }
     }
+
+    public void AppendUniqueNeighbor(SimplifyVertex vertex)
+    {
+        if(!neighbors.Contains(vertex) && this != vertex)
+        {
+            neighbors.Add(vertex);
+        }
+    }
+
 
     public void RemoveNeighbor(SimplifyVertex vertex)
     {
@@ -59,18 +80,26 @@ public class SimplifyVertex
         vertex.RemoveNeighbor(this);
     }
 
+    public void RemvoeIfNonNeighbor(SimplifyVertex vertex)
+    {
+        if (!neighbors.Contains(vertex)) return;
+        foreach (SimplifyTriangle triangle in triangles)
+        {
+            if (triangle.Contains(vertex)) return;
+        }
+
+        neighbors.Remove(vertex);
+    }
+
     public void Remove()
     {
         Debug.Log("SimplifyVertex.Remove::::");
+        if (this.triangles.Count > 0) return;
         isRemoved = true;
-        foreach(SimplifyVertex neighbor in neighbors)
+        while(neighbors.Count>0)
         {
-            neighbor.neighbors.Remove(this);
+            neighbors[0].neighbors.Remove(this);
+            neighbors.Remove(neighbors[0]);
         }
-
-        neighbors.Clear();
-        triangles.Clear();
     }
-
-
 }

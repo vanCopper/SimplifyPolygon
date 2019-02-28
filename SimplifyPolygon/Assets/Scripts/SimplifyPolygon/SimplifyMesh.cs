@@ -26,11 +26,11 @@ public class SimplifyMesh
         while(true)
         {
             int vertexCount = vertices.Count;
-            if (vertexCount == 0 || vertexCount <= 200) break;
+            if (vertexCount == 0 || vertexCount <= 50) break;
 
             SimplifyVertex mn = MiniCostEdge();
 
-            if (mn.isRemoved || mn.cost > 1000000.0f) break;
+            //if (mn.isRemoved || mn.cost > 1000000.0f) break;
 
             Collapse(mn, mn.collapse);
             vertices.Remove(mn);
@@ -88,12 +88,12 @@ public class SimplifyMesh
     {
         Vector3[] originVertices = originMesh.vertices;
         int[] originTriangles = originMesh.triangles;
-        Vector2[] originUVS = originMesh.uv;
+        
 
         for (int i = 0; i < originVertices.Length; i++)
         {
             Vector3 vexter = originVertices[i];
-            vertices.Add(new SimplifyVertex(vexter, originUVS[i], i));
+            vertices.Add(new SimplifyVertex(vexter,i));
         }
 
         int v0;
@@ -104,13 +104,15 @@ public class SimplifyMesh
             v0 = originTriangles[j];
             v1 = originTriangles[j + 1];
             v2 = originTriangles[j + 2];
+            if(vertices[v0] == vertices[v1] || vertices[v0] == vertices[v2] || vertices[v1] == vertices[v2])
+            {
+                continue;
+            }
             triangles.Add(new SimplifyTriangle(vertices[v0], vertices[v1], vertices[v2]));
 
             vertices[v0].AppendNeighbor(vertices[v1]);
             vertices[v0].AppendNeighbor(vertices[v2]);
             vertices[v1].AppendNeighbor(vertices[v2]);
-
-            Debug.Log("");
         }
 
         Debug.Log("InitMesh");
@@ -131,7 +133,8 @@ public class SimplifyMesh
 
     private float ComputeEdgeCollapseCost(SimplifyVertex u, SimplifyVertex v)
     {
-        float edgelength = VertexUtils.magnitude(u.position - v.position);
+        Vector3 tp = v.position - u.position;
+        float edgelength = Vector3.SqrMagnitude(tp);
         float curvature = 0.0f; // 曲率
 
         List<SimplifyTriangle> sides = new List<SimplifyTriangle>();
@@ -169,7 +172,7 @@ public class SimplifyMesh
             return;
         }
 
-        v.cost = 1000001.0f;
+        v.cost = 1000000.0f;
         v.collapse = null;
 
         //if (v.isEdge) return;
@@ -189,10 +192,6 @@ public class SimplifyMesh
     {
         foreach (SimplifyVertex v in vertices)
         {
-            if (v.triangles.Count < 6)
-            {
-                v.isEdge = true;
-            }
             ComputeEdgeCostAtVertex(v);
         }
     }

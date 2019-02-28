@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Rabbit.cs" />
     <Compile Include="Assets\Scripts\SimplifyPolygon\SimplifyMesh.cs" />
     <Compile Include="Assets\Scripts\SimplifyPolygon\SimplifyTriangle.cs" />
     <Compile Include="Assets\Scripts\SimplifyPolygon\SimplifyVertex.cs" />
