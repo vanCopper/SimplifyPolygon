@@ -20,11 +20,12 @@ public class SimplifyTest : MonoBehaviour
         if (mesh == null)
         {
             mesh = new Mesh();
-            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-            mesh.vertices = Rabbit.vertices;
-            mesh.triangles = Rabbit.triangles;
-            mesh.RecalculateNormals();
         }
+
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.vertices = Rabbit.vertices;
+        mesh.triangles = Rabbit.triangles;
+        mesh.RecalculateNormals();
 
         m_OriginVerNum = Rabbit.vertices.Length;
         //Mesh mesh = meshRenderer.sharedMesh;

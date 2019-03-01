@@ -255,29 +255,6 @@ public class SimplifyMesh
         {
             ComputeEdgeCostAtVertex(tmp[i]);
         }
-
-
-        //List<SimplifyVertex> neighbors = new List<SimplifyVertex>(u.neighbors);
-        //List<SimplifyTriangle> triangles = new List<SimplifyTriangle>(u.triangles);
-
-        //foreach(SimplifyTriangle triangle in triangles)
-        //{
-        //    if(triangle.Contains(v))// 移除包含uv边的三角形
-        //    {
-        //        triangle.Remove();
-        //    }else
-        //    {
-        //        // 用v替换u 更新包含u但不包含v的三角形
-        //        triangle.ReplaceSimplifyVertex(u, v);
-        //    }
-        //}
-        //// 移除顶点u
-        //u.Remove();
-        ////重新计算u.neighbors顶点代价
-        //foreach(SimplifyVertex vertex in neighbors)
-        //{
-        //    ComputeEdgeCostAtVertex(vertex);
-        //}
     }
 
 }
