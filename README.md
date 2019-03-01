@@ -1,1 +1,4 @@
 # SimplifyPolygon
+
+![](./Images/rabit.gif)
+
