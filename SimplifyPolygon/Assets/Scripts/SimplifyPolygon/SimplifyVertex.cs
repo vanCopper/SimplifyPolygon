@@ -93,7 +93,6 @@ public class SimplifyVertex
 
     public void Remove()
     {
-        Debug.Log("SimplifyVertex.Remove::::");
         if (this.triangles.Count > 0) return;
         isRemoved = true;
         while(neighbors.Count>0)

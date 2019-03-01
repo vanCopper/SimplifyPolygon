@@ -13,20 +13,32 @@ public class SimplifyMesh
     public Mesh originMesh;
     public List<SimplifyTriangle> triangles = new List<SimplifyTriangle>();
     public List<SimplifyVertex> vertices = new List<SimplifyVertex>();
+
+    public int renderVerticesNum = 0; // 当前渲染的顶点数
+    public int renderTrianglesNum = 0; // 当前渲染的面数
+
+    public int originVerticesNum = 0; // 原网格顶点数
+    public int originTrianglesNum = 0; // 原网格三角形数
+
+    private int m_targetVerNum = 0;
+
     public SimplifyMesh(Mesh mesh)
     {
         originMesh = mesh;
         InitMesh();
     }
 
-    public Mesh GetSimplifyMesh()
+    public Mesh GetSimplifyMesh(int targetVerNum)
     {
+        if (m_targetVerNum == targetVerNum) return null;
+
+        m_targetVerNum = targetVerNum;
         ComputeAllEdgeCollapseCosts();
 
         while(true)
         {
             int vertexCount = vertices.Count;
-            if (vertexCount == 0 || vertexCount <= 200) break;
+            if (vertexCount == 0 || vertexCount <= m_targetVerNum) break;
 
             SimplifyVertex mn = MiniCostEdge();
 
@@ -81,13 +93,18 @@ public class SimplifyMesh
         simplifyMesh.triangles = indices.ToArray();
         simplifyMesh.RecalculateNormals();
 
+        renderVerticesNum = tVertices.Count;
+        renderTrianglesNum = indices.Count / 3;
         return simplifyMesh;
     }
 
-    private void InitMesh()
+    public void InitMesh()
     {
         Vector3[] originVertices = originMesh.vertices;
         int[] originTriangles = originMesh.triangles;
+
+        vertices.Clear();
+        triangles.Clear();
         
 
         for (int i = 0; i < originVertices.Length; i++)
@@ -115,7 +132,8 @@ public class SimplifyMesh
             vertices[v1].AppendNeighbor(vertices[v2]);
         }
 
-        Debug.Log("InitMesh");
+        originTrianglesNum = triangles.Count;
+        originVerticesNum = vertices.Count;
     }
 
     private SimplifyVertex MiniCostEdge()
@@ -153,8 +171,8 @@ public class SimplifyMesh
             float mincurv = 1;
             foreach (SimplifyTriangle sTriangle in sides)
             {
-                float dotprod = VertexUtils.Xor(triangle.normal, sTriangle.normal);
-                mincurv = Mathf.Min(mincurv, (1 - dotprod) / 2.0f);
+                float dotprod = Vector3.Dot(triangle.normal, sTriangle.normal);
+                mincurv = Mathf.Min(mincurv, (1.0f - dotprod) / 2.0f);
             }
 
             curvature = Mathf.Max(curvature, mincurv);
@@ -208,7 +226,7 @@ public class SimplifyMesh
 
         int i;
         List<SimplifyVertex> tmp = new List<SimplifyVertex>();
-
+        SimplifyTriangle simplifyTriangle;
         for(i = 0; i < u.neighbors.Count; i++)
         {
             tmp.Add(u.neighbors[i]);
@@ -218,11 +236,13 @@ public class SimplifyMesh
         {
             if(u.triangles[i].Contains(v))
             {
-                u.triangles[i].Remove();
+                simplifyTriangle = u.triangles[i];
+                triangles.Remove(simplifyTriangle);
+                simplifyTriangle.Remove();
             }
         }
-        // 用v替换u 更新包含u但不包含v的三角形
 
+        // 用v替换u 更新包含u但不包含v的三角形
         for(i = u.triangles.Count - 1; i >= 0; i--)
         {
             u.triangles[i].ReplaceSimplifyVertex(u, v);
