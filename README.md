@@ -26,7 +26,7 @@
 
 该算法通过重复使用一个简单的边坍塌操作来降低模型的复杂度，如图2：
 
-![](./images/sp_01.png)
+![](./Images/sp_01.png)
 
 **u,v**是即将被操作的两点：
 
@@ -38,7 +38,7 @@
 
 假设有图3所示多边形，通过上述过程即可完成减面操作：
 
-![](./images/sp_02.png)
+![](./Images/sp_02.png)
 
 
 
@@ -51,7 +51,7 @@
 
 所以确定一条边是否要坍塌，取决于**该条边的边长与曲率值的乘积**。边（**uv**)的曲率值则是通过比较相邻面的法线点积来得到，计算公式：
 
-![](./images/sp_03.png)
+![](./Images/sp_03.png)
 
 
 
@@ -93,7 +93,7 @@ private float ComputeEdgeCollapseCost(SimplifyVertex u, SimplifyVertex v)
 
 该算法对于脊状边的坍塌也是有效的，不管该脊是锐角或直角。如图4：
 
-![](./images/sp_04.png)
+![](./Images/sp_04.png)
 
 正确的脊状坍塌**B**可至**A**,**C**。**A**可至**C**。
 
