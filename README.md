@@ -16,7 +16,7 @@
 
 #### H.Hoppe Progressive Meshes
 
-多数减面算法都是**H.Hoppe Progressive Meshes**的改进或变形而来。**Progressive Meshes**是由**Hugues Hoppe** 1996年发表在***ACM SIGGRAPH（国际图形图像协会）* **的一篇论文。
+多数减面算法都是**H.Hoppe Progressive Meshes**的改进或变形而来。**Progressive Meshes**是由**Hugues Hoppe** 1996年发表在**ACM SIGGRAPH（国际图形图像协会）**的一篇论文。
 
 > WebPage: http://hhoppe.com/proj/pm/
 >
